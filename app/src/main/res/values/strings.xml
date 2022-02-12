@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Power Manager</string>
+    <string name="app_package">ma.um6p.powermanager</string>
+    <string name="app_text">A realtime power monitor for any Application</string>
+    <string name="server_text">Monitor and log power usage to your server</string>
+    <string name="server_connect_text">Connect to your server</string>
+    <string name="server_connect">Connection</string>
+    <string name="server_address">Server address</string>
+    <string name="monitor_text">Monitor power usage only</string>
+    <string name="monitor_btn">Monitor power usage only</string>
+    <!-- Strings: activity_main -->
+    <string name="select_app">Select an application you want to monitor</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
