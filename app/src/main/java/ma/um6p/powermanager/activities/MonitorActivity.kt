@@ -13,12 +13,21 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import ma.um6p.powermanager.databinding.ActivityMonitorBinding
 import ma.um6p.powermanager.models.App
+
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
+
+import ma.um6p.powermanager.dataTransferModels.summary.SummaryResponse
+import ma.um6p.powermanager.dataTransferModels.summary.StoreFullSummaryModel
+import ma.um6p.powermanager.retrofit.ApiInterface
+import ma.um6p.powermanager.retrofit.RetrofitBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MonitorActivity : AppCompatActivity() {
@@ -92,7 +101,34 @@ class MonitorActivity : AppCompatActivity() {
                 }
                 if (SELECTED_APP.name == "Measure Idle power" && execTime!! >= IDLE_EXEC_TIME) {
                     timer.cancel()
-                    runOnUiThread { monitorSummary() }
+                    runOnUiThread { val ms = monitorSummary()
+ /*                       val newStoreModel = StoreFullSummaryModel(SELECTED_APP.name,ms.avgPower,System.currentTimeMillis().toString(),energyJoules,START_TIME.toString())
+
+
+                        //make a retrofit builder object implements the ApiInterface so that we can call the function predefined in the ApiInterface
+                        val retrofitBuilderObject = RetrofitBuilder.buildData(ApiInterface::class.java)
+
+                        //create one more variable to get the data from the retrofit builder
+                        val requestCall = retrofitBuilderObject.addSummary(newStoreModel)
+
+                        requestCall.enqueue(object : Callback<SummaryResponse?> {
+                            override fun onResponse(
+                                call: Call<SummaryResponse?>,
+                                response: Response<SummaryResponse?>
+                            ) {
+                                val responseBody = response.body()!!
+                                Log.i("MainActivity", "LogMessage"+response.body())
+
+                            }
+
+                            override fun onFailure(call: Call<SummaryResponse?>, t: Throwable) {
+                                Log.i("MainActivity", "ErrorMessage"+t.message)
+                            }
+                        })*/
+
+
+
+                    }
                 }
             }
         }, 0, 1000) //put here time 1000 milliseconds=1 second
@@ -292,5 +328,23 @@ class MonitorActivity : AppCompatActivity() {
             }
             return null
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
