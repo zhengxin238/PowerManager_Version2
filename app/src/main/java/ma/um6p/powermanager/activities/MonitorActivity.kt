@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import ma.um6p.powermanager.dataTransferModels.dynamicInfo.DynamicInfoOriginal
 import ma.um6p.powermanager.databinding.ActivityMonitorBinding
 import ma.um6p.powermanager.models.App
 
@@ -53,8 +54,18 @@ class MonitorActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        var dinfo : DynamicInfoOriginal = DynamicInfoOriginal(
+            "randomApp", "2022-10-31", "22",22.0,
+            22,2,22.0,22,22,
+            22.0,22,22, arrayOf(22),"22",
+            "22","22")
+        storeDynamicInfo(dinfo)
+
         printStaticInfo()
         dynamicInfo()
+
+
 
         // initialize a new intent filter instance
 //        val filters = IntentFilter()
@@ -69,16 +80,16 @@ class MonitorActivity : AppCompatActivity() {
         hundleResults(timer)
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                val bm = applicationContext.getSystemService(BATTERY_SERVICE) as BatteryManager
+                val bm = applicationContext.getSystemService(BATTERY_SERVICE) as BatteryManager //an object
                 val bs: Intent? = registerReceiver(
                     null,
                     IntentFilter(Intent.ACTION_BATTERY_CHANGED)
                 )
                 execTime = (System.currentTimeMillis() - START_TIME!!.toDouble()) / 1000
-                val level = bs?.getIntExtra(BatteryManager.EXTRA_LEVEL, -199)
-                val temperature =
+                val level = bs?.getIntExtra(BatteryManager.EXTRA_LEVEL, -199) // in percent
+                val temperature = // temperature of battery
                     bs?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -199)!!.toDouble() / 10
-                val plugged = bs.getIntExtra(BatteryManager.EXTRA_PLUGGED, -199)
+                val plugged = bs.getIntExtra(BatteryManager.EXTRA_PLUGGED, -199) //whether the phone in plugged or using battery
 //                val status = bs.getIntExtra(BatteryManager.EXTRA_STATUS, -199)
                 val voltage =
                     bs.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -199).toDouble() / 1000
@@ -99,6 +110,76 @@ class MonitorActivity : AppCompatActivity() {
                         current = current,
                     )
                 }
+
+
+
+
+// call the function for memory and cpu here and get the return value
+
+                  var dinfo : DynamicInfoOriginal = DynamicInfoOriginal(
+                      "randomApp", "2022-10-31", "22",22.0,
+                      22,2,22.0,22,22,
+                      22.0,22,22, arrayOf(22),"22",
+                      "22","22")
+                  dinfo.appName = SELECTED_APP.name
+                  dinfo.launchDate = START_TIME.toString()
+                  dinfo.executionTime = execTime.toString()
+                  if (level != null) {
+                      dinfo.batteryStatistics = level.toDouble()
+                  }
+                  dinfo.batteryCapacity = applicationContext.batteryCapacity!!.toInt()
+                  dinfo.batteryVoltage = voltage
+                  dinfo.batteryCurrent = current
+                  dinfo.powerDemand = (abs(current)*voltage).toInt()
+                  dinfo.energyConsumption = powerDemand.average() * execTime!!
+
+
+        //          for (i in 0 until dinfo.cpuCores) {
+         //             dinfo.cpuFrequencies[i] = lc[i]
+         //         }
+                val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+                val memInfo = ActivityManager.MemoryInfo()
+                am.getMemoryInfo(memInfo)
+                val availMemory = memInfo.availMem.toDouble() / (1024 * 1024 * 1024)
+                val totalMemory = memInfo.totalMem.toDouble() / (1024 * 1024 * 1024)
+                val usedMemory = totalMemory - availMemory
+                val usage = (usedMemory * 100 / totalMemory).toInt()
+                Log.i("MonitorActivity", "1111111111111111")
+                Log.i("MonitorActivity",memInfo.toString())
+                Log.i("MonitorActivity",availMemory.toString())
+
+                Log.i("MonitorActivity",totalMemory.toString())
+                Log.i("MonitorActivity",usage.toString())
+                Log.i("MonitorActivity", "222222222222222222")
+                dinfo.totalMemory = totalMemory.toString()
+                dinfo.usedMemory = usedMemory.toString()
+                dinfo.memoryStatistics = usage.toString()
+
+
+
+
+
+                val n = Runtime.getRuntime().availableProcessors()
+                val usages = IntArray(n)
+                for (i in 0 until n) {
+                    val coreInfo = getCoreFreq(i)
+                    usages[i] = coreInfo[3]
+                }
+                val statistics = usages.average().toInt()
+
+                dinfo.cpuStatistics =  statistics
+                dinfo.cpuCores =  n
+                dinfo.cpuFrequencies = usages.toTypedArray()
+
+
+
+                storeDynamicInfo(dinfo) // this means this function will be called once a second
+
+
+
+
+
+
                 if (SELECTED_APP.name == "Measure Idle power" && execTime!! >= IDLE_EXEC_TIME) {
                     timer.cancel()
                     runOnUiThread { val ms = monitorSummary()
@@ -196,6 +277,8 @@ class MonitorActivity : AppCompatActivity() {
     private fun hundleResults(timer: Timer) {
         runOnUiThread {
             var doubleClick: Boolean? = false
+
+
             binding.summaryText.setOnClickListener {
                 if (doubleClick!!) {
                     timer.cancel()
@@ -240,7 +323,8 @@ class MonitorActivity : AppCompatActivity() {
 
 
     @SuppressLint("SetTextI18n")
-    private fun logMemory() {
+    private fun logMemory(): Array<String>{
+
         val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val memInfo = ActivityManager.MemoryInfo()
         am.getMemoryInfo(memInfo)
@@ -254,10 +338,18 @@ class MonitorActivity : AppCompatActivity() {
         binding.monitorMemoryUsage.text = "$usage %"
         binding.monitorMemoryTotal.text = "$rTotalMemory GB"
         binding.monitorMemoryUsed.text = "$rUsedMemory GB"
+
+        val arrayTest = arrayOf(usage.toString(), rTotalMemory, rUsedMemory)
+
+        print(arrayTest)
+
+        return arrayTest
+
+
     }
 
     @SuppressLint("SetTextI18n")
-    private fun logCpus(freqMetric: String = "cur") {
+    private fun logCpus(freqMetric: String = "cur"):  IntArray {
         binding.monitorCpuFreqLeft.text = ""
         binding.monitorCpuFreqRight.text = ""
         val n = Runtime.getRuntime().availableProcessors()
@@ -283,6 +375,8 @@ class MonitorActivity : AppCompatActivity() {
         }
         // print overall usage
         binding.monitorCpuUsge.text = "${usages.average().toInt()} %"
+
+        return usages
     }
 
     private fun readIntegerFile(filePath: String): Int {
@@ -328,6 +422,31 @@ class MonitorActivity : AppCompatActivity() {
             }
             return null
         }
+
+    private fun storeDynamicInfo (newDynamicInfoOriginal: DynamicInfoOriginal){
+       /* val newDynamicInfoOriginalexample = DynamicInfoOriginal(
+            "randomApp", "2022-10-31", "22",22,
+            22,2,22,22,22,
+            22,22,22,22,22,
+            22,22)*/
+
+        //make a retrofit builder object implements the ApiInterface so that we can call the function predefined in the ApiInterface
+        val retrofitBuilderObject = RetrofitBuilder.buildData(ApiInterface::class.java)
+
+        //create one more variable to get the data from the retrofit builder
+        val requestCall = retrofitBuilderObject.storeDynamicInfo(newDynamicInfoOriginal)
+
+        requestCall.enqueue(object : Callback<String?> {
+            override fun onResponse(call: Call<String?>, response: Response<String?>) {
+                val responseBody = response.body()!!
+                Log.i("MonitorActivity", "LogMessage"+response.body())
+            }
+
+            override fun onFailure(call: Call<String?>, t: Throwable) {
+                Log.i("MonitorActivity", "ErrorMessage"+t.message)
+            }
+        })
+    }
 
 
 

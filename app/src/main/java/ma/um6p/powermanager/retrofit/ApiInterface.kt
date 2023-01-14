@@ -1,6 +1,7 @@
 package ma.um6p.powermanager.retrofit
 
 
+import ma.um6p.powermanager.dataTransferModels.dynamicInfo.DynamicInfoOriginal
 import ma.um6p.powermanager.dataTransferModels.entry.response.EntryResponse
 import ma.um6p.powermanager.dataTransferModels.entry.source.DateModel
 import ma.um6p.powermanager.dataTransferModels.entry.source.StoreFullEntryModel
@@ -39,6 +40,12 @@ interface ApiInterface {
     fun showEntryBySummaryId(@Body newSummaryID: SummaryID): Call<EntryResponse>
     @POST("api/entry/showEntryBetweenDate")
     fun  showEntryBetweenDate(@Body newDateModel:DateModel): Call<EntryResponse>
+
+
+////DynamicInfo
+    @POST("api/entry/storeDynamicInfo")
+    fun storeDynamicInfo(@Body newDynamicInfoOriginal: DynamicInfoOriginal): Call<String>
+
 
 
 }
