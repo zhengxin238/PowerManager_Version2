@@ -55,12 +55,7 @@ class MonitorActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        var dinfo : DynamicInfoOriginal = DynamicInfoOriginal(
-            "randomApp", "2022-10-31", "22",22.0,
-            22,2.0,22.0,22,22,
-            22.0,22,22, arrayOf(22),"22",
-            "22","22")
-        storeDynamicInfo(dinfo)
+
 
         printStaticInfo()
         dynamicInfo()
@@ -114,7 +109,7 @@ class MonitorActivity : AppCompatActivity() {
 
 
 
-// call the function for memory and cpu here and get the return value
+// get the different values of the Model "DynamicInfoOriginal" to be put into the function storeDynamicInfo()
 
                   var dinfo : DynamicInfoOriginal = DynamicInfoOriginal(
                       SELECTED_APP.name, START_TIME.toString(),  execTime.toString(),2.0,
@@ -135,9 +130,6 @@ class MonitorActivity : AppCompatActivity() {
                   dinfo.energyConsumption = powerDemand.average() * execTime!!
 
 
-        //          for (i in 0 until dinfo.cpuCores) {
-         //             dinfo.cpuFrequencies[i] = lc[i]
-         //         }
                 val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
                 val memInfo = ActivityManager.MemoryInfo()
                 am.getMemoryInfo(memInfo)
@@ -173,13 +165,14 @@ class MonitorActivity : AppCompatActivity() {
                 dinfo.cpuFrequencies = usages.toTypedArray()
 
 
-
-                storeDynamicInfo(dinfo) // this means this function will be called once a second
+// use this function to save the dynamic information to the server
+                storeDynamicInfo(dinfo) // this is in timer and this function will be called once a second
 
                 var newSummary : StoreFullSummaryModel = StoreFullSummaryModel(SELECTED_APP.name,powerDemand.average(), powerDemand.average() * execTime!!,
                     execTime!!
                 )
-                storeSummaryInfo(newSummary)
+// use this function to save the summary information to the server
+                storeSummaryInfo(newSummary) // this is in timer and this function will be called once a second
 
 
 
@@ -426,7 +419,7 @@ class MonitorActivity : AppCompatActivity() {
             }
             return null
         }
-
+    // use this function to save the dynamic information to the server
     private fun storeDynamicInfo (newDynamicInfoOriginal: DynamicInfoOriginal){
        /* val newDynamicInfoOriginalexample = DynamicInfoOriginal(
             "randomApp", "2022-10-31", "22",22,
@@ -452,6 +445,8 @@ class MonitorActivity : AppCompatActivity() {
         })
     }
 
+
+    // use this function to save the summary information to the server
     private fun storeSummaryInfo(newSummary: StoreFullSummaryModel){
 
         val retrofitBuilderObject = RetrofitBuilder.buildData(ApiInterface::class.java)
