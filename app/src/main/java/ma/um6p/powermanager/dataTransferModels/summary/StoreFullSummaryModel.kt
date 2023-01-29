@@ -2,9 +2,11 @@ package ma.um6p.powermanager.dataTransferModels.summary
 
 data class StoreFullSummaryModel(
 
-    val appTitle: String,
-    val averagePower: Double,
-    val endTime: String,
-    val energyConsumption: Double,
-    val startTime: String
+    var appTitle: String,
+    var averagePower: Double,
+  //  val endTime: String,
+    var energyConsumption: Double,
+    var executionTime: Double
+  //  val startTime: String
+
 )

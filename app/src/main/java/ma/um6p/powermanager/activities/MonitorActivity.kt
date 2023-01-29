@@ -57,7 +57,7 @@ class MonitorActivity : AppCompatActivity() {
 
         var dinfo : DynamicInfoOriginal = DynamicInfoOriginal(
             "randomApp", "2022-10-31", "22",22.0,
-            22,2,22.0,22,22,
+            22,2.0,22.0,22,22,
             22.0,22,22, arrayOf(22),"22",
             "22","22")
         storeDynamicInfo(dinfo)
@@ -117,8 +117,8 @@ class MonitorActivity : AppCompatActivity() {
 // call the function for memory and cpu here and get the return value
 
                   var dinfo : DynamicInfoOriginal = DynamicInfoOriginal(
-                      "randomApp", "2022-10-31", "22",22.0,
-                      22,2,22.0,22,22,
+                      SELECTED_APP.name, START_TIME.toString(),  execTime.toString(),2.0,
+                      applicationContext.batteryCapacity!!.toInt(),temperature,voltage,current,(abs(current)*voltage).toInt(),
                       22.0,22,22, arrayOf(22),"22",
                       "22","22")
                   dinfo.appName = SELECTED_APP.name
@@ -130,6 +130,7 @@ class MonitorActivity : AppCompatActivity() {
                   dinfo.batteryCapacity = applicationContext.batteryCapacity!!.toInt()
                   dinfo.batteryVoltage = voltage
                   dinfo.batteryCurrent = current
+                  dinfo.batteryTemparature = temperature
                   dinfo.powerDemand = (abs(current)*voltage).toInt()
                   dinfo.energyConsumption = powerDemand.average() * execTime!!
 
@@ -175,7 +176,10 @@ class MonitorActivity : AppCompatActivity() {
 
                 storeDynamicInfo(dinfo) // this means this function will be called once a second
 
-
+                var newSummary : StoreFullSummaryModel = StoreFullSummaryModel(SELECTED_APP.name,powerDemand.average(), powerDemand.average() * execTime!!,
+                    execTime!!
+                )
+                storeSummaryInfo(newSummary)
 
 
 
@@ -446,6 +450,26 @@ class MonitorActivity : AppCompatActivity() {
                 Log.i("MonitorActivity", "ErrorMessage"+t.message)
             }
         })
+    }
+
+    private fun storeSummaryInfo(newSummary: StoreFullSummaryModel){
+
+        val retrofitBuilderObject = RetrofitBuilder.buildData(ApiInterface::class.java)
+
+        val requestCall = retrofitBuilderObject.addSummary(newSummary)
+
+        requestCall.enqueue(object : Callback<String?> {
+            override fun onResponse(call: Call<String?>, response: Response<String?>) {
+                val responseBody = response.body()!!
+                Log.i("MonitorActivity", "LogMessage"+response.body())
+            }
+
+            override fun onFailure(call: Call<String?>, t: Throwable) {
+                Log.i("MonitorActivity", "ErrorMessage"+t.message)
+            }
+        })
+
+
     }
 
 

@@ -6,7 +6,7 @@ data class DynamicInfoOriginal(
     var executionTime:String,
     var batteryStatistics: Double,
     var batteryCapacity: Int,
-    var batteryTemparature: Int,
+    var batteryTemparature: Double,
     var batteryVoltage: Double,
     var batteryCurrent:Int,
     var powerDemand: Int,

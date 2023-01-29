@@ -21,7 +21,7 @@ interface ApiInterface {
     @GET("api/entry/summarylist")
     fun getSummaryData(): Call<SummaryResponse>
     @POST("api/entry/storeFullSummary")
-    fun addSummary(@Body newSummary: StoreFullSummaryModel): Call<SummaryResponse>
+    fun addSummary(@Body newSummary: StoreFullSummaryModel): Call<String>
     @POST("/api/entry/updateFullSummaryWithID")
     fun updateFullSummaryWithID(@Body newUpdateSummary: UpdateFullSummaryWithIDModel) : Call<SummaryResponse>
     @POST("api/entry/querySummaryDataWithAppTItleAndStartTime")
@@ -45,6 +45,8 @@ interface ApiInterface {
 ////DynamicInfo
     @POST("api/entry/storeDynamicInfo")
     fun storeDynamicInfo(@Body newDynamicInfoOriginal: DynamicInfoOriginal): Call<String>
+
+
 
 
 
